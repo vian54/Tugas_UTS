@@ -1,228 +1,166 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ContactApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class ContactApp extends StatefulWidget {
+  @override
+  _ContactAppState createState() => _ContactAppState();
+}
+
+class _ContactAppState extends State<ContactApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _toggleTheme(ThemeMode mode) {
+    setState(() {
+      _themeMode = mode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Profil Mahasiswa',
       debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
       theme: ThemeData(
-        primarySwatch: Colors.teal,
-        useMaterial3: true,
-      ),
-      home: const ProfilMahasiswaPage(),
-    );
-  }
-}
-
-class ProfilMahasiswaPage extends StatelessWidget {
-  const ProfilMahasiswaPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.teal[50],
-      appBar: AppBar(
-        title: const Text('Profil Mahasiswa'),
-        backgroundColor: Colors.teal[700],
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: StudentProfileCard(
-            photoUrl: 'https://via.placeholder.com/150',
-            name: 'Ahmad Fauzi Rizqullah',
-            nim: '2141720001',
-            prodi: 'Teknik Informatika',
-          ),
+        brightness: Brightness.light,
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[50],
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 2,
+        ),
+        cardTheme: CardThemeData(
+          color: Colors.white,
+          elevation: 2,
         ),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[900],
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[850],
+          foregroundColor: Colors.white,
+          elevation: 2,
+        ),
+        cardTheme: CardThemeData(
+          color: Colors.grey[850],
+          elevation: 2,
+        ),
+      ),
+      home: ContactListPage(onThemeChanged: _toggleTheme, currentTheme: _themeMode),
     );
   }
 }
 
-class StudentProfileCard extends StatelessWidget {
-  final String photoUrl;
-  final String name;
-  final String nim;
-  final String prodi;
+class ContactListPage extends StatelessWidget {
+  final Function(ThemeMode) onThemeChanged;
+  final ThemeMode currentTheme;
+  
+  const ContactListPage({Key? key, required this.onThemeChanged, required this.currentTheme}) : super(key: key);
 
-  const StudentProfileCard({
-    Key? key,
-    required this.photoUrl,
-    required this.name,
-    required this.nim,
-    required this.prodi,
-  }) : super(key: key);
+  Color getStatusColor(String status) {
+    switch (status) {
+      case "Online":
+        return Colors.green;
+      case "Away":
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shadowColor: Colors.teal.withOpacity(0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        width: double.infinity,
-        constraints: const BoxConstraints(maxWidth: 400),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Foto Profil
-            CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.teal[100],
-              child: CircleAvatar(
-                radius: 56,
-                backgroundColor: Colors.teal[200],
-                child: Icon(
-                  Icons.person,
-                  size: 70,
-                  color: Colors.teal[700],
+    final List<Map<String, dynamic>> contacts = [
+      {"name": "Rama", "phone": "08123456789", "status": "Online"},
+      {"name": "Ayu", "phone": "08139584772", "status": "Offline"},
+      {"name": "Doni", "phone": "08781234112", "status": "Away"},
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Daftar Kontak"),
+        actions: [
+          PopupMenuButton<ThemeMode>(
+            icon: Icon(Icons.brightness_6),
+            onSelected: onThemeChanged,
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: ThemeMode.light,
+                child: Row(
+                  children: [
+                    Icon(Icons.light_mode, color: Colors.amber),
+                    SizedBox(width: 8),
+                    Text("Terang"),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            
-            // Nama Lengkap
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+              PopupMenuItem(
+                value: ThemeMode.dark,
+                child: Row(
+                  children: [
+                    Icon(Icons.dark_mode, color: Colors.indigo),
+                    SizedBox(width: 8),
+                    Text("Gelap"),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            
-            // Divider
-            Container(
-              width: 60,
-              height: 3,
-              decoration: BoxDecoration(
-                color: Colors.teal[400],
-                borderRadius: BorderRadius.circular(2),
+              PopupMenuItem(
+                value: ThemeMode.system,
+                child: Row(
+                  children: [
+                    Icon(Icons.settings_suggest, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text("Sistem"),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            
-            // NIM
-            _buildInfoRow(
-              icon: Icons.badge,
-              label: 'NIM',
-              value: nim,
-            ),
-            const SizedBox(height: 12),
-            
-            // Program Studi
-            _buildInfoRow(
-              icon: Icons.school,
-              label: 'Program Studi',
-              value: prodi,
-            ),
-            const SizedBox(height: 24),
-            
-            // Tombol Lihat Detail
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
+            ],
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: contacts.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.blue,
+                child: Icon(Icons.person, color: Colors.white),
+              ),
+              title: Text(contacts[index]["name"]),
+              subtitle: Row(
+                children: [
+                  Text(contacts[index]["phone"]),
+                  SizedBox(width: 8),
+                  Icon(Icons.circle,
+                      size: 10, color: getStatusColor(contacts[index]["status"])),
+                  SizedBox(width: 4),
+                  Text(
+                    contacts[index]["status"],
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.call),
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Detail Mahasiswa'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Nama: $name'),
-                          const SizedBox(height: 8),
-                          Text('NIM: $nim'),
-                          const SizedBox(height: 8),
-                          Text('Prodi: $prodi'),
-                        ],
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Tutup'),
-                        ),
-                      ],
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Memanggil ${contacts[index]['name']}..."),
                     ),
                   );
                 },
-                icon: const Icon(Icons.visibility),
-                label: const Text(
-                  'Lihat Detail',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal[600],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 2,
-                ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
-    );
-  }
-
-  Widget _buildInfoRow({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Colors.teal[600],
-        ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }

@@ -10,20 +10,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:layout_tugas/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Contact list displays correctly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(ContactApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that our contact list page displays
+    expect(find.text('Daftar Kontak'), findsOneWidget);
+    
+    // Verify that contacts are displayed
+    expect(find.text('Rama'), findsOneWidget);
+    expect(find.text('Ayu'), findsOneWidget);
+    expect(find.text('Doni'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify phone numbers are displayed
+    expect(find.text('08123456789'), findsOneWidget);
+    
+    // Verify call button exists
+    expect(find.byIcon(Icons.call), findsWidgets);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('Theme toggle button exists', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(ContactApp());
+
+    // Verify theme toggle button exists
+    expect(find.byIcon(Icons.brightness_6), findsOneWidget);
   });
 }
