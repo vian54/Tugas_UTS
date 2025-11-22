@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
+<<<<<<< HEAD
         android:label="tugas_uts"
+=======
+        android:label="layout_tugas"
+>>>>>>> f43b401e9dac48839625ee2884d2e99d984bf38d
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

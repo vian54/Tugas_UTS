@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # tugas_uts
+=======
+# layout_tugas
+>>>>>>> f43b401e9dac48839625ee2884d2e99d984bf38d
 
 A new Flutter project.
 
